@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using System.Runtime.InteropServices;
 
 namespace GeoTimeZone;
 
@@ -13,6 +14,7 @@ public static class TimeZoneLookup
     /// <param name="latitude">The latitude of the location.</param>
     /// <param name="longitude">The longitude of the location.</param>
     /// <returns>A <see cref="TimeZoneResult"/> object, which contains the result(s) of the operation.</returns>
+    [DllExport]
     public static TimeZoneResult GetTimeZone(double latitude, double longitude)
     {
 #if NET6_0_OR_GREATER || NETSTANDARD2_1

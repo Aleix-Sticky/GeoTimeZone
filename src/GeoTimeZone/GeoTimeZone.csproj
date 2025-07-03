@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <Description>Provides an IANA time zone identifier from latitude and longitude coordinates.</Description>
     <Authors>Matt Johnson-Pint,Simon Bartlett</Authors>
@@ -10,11 +9,9 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Version>6.0.0</Version>
   </PropertyGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="TZ.dat.gz;TZL.dat.gz" />
   </ItemGroup>
-
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>..\..\.assets\mattjohnsonpint.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
@@ -25,13 +22,58 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <DllExportIdent>C5D1271A-6D3A-40D9-B557-4607B7361608</DllExportIdent>
+    <DllExportMetaLibName>DllExport.dll</DllExportMetaLibName>
+    <DllExportNamespace>System.Runtime.InteropServices</DllExportNamespace>
+    <DllExportDDNSCecil>true</DllExportDDNSCecil>
+    <PlatformTarget>x64</PlatformTarget>
+    <DllExportOrdinalsBase>1</DllExportOrdinalsBase>
+    <DllExportGenExpLib>false</DllExportGenExpLib>
+    <DllExportOurILAsm>false</DllExportOurILAsm>
+    <DllExportSysObjRebase>false</DllExportSysObjRebase>
+    <DllExportLeaveIntermediateFiles>false</DllExportLeaveIntermediateFiles>
+    <DllExportTimeout>30000</DllExportTimeout>
+    <DllExportPeCheck>6</DllExportPeCheck>
+    <DllExportPatches>0</DllExportPatches>
+    <DllExportRefreshObj>false</DllExportRefreshObj>
+    <DllExportILAsmExternAsm />
+    <DllExportILAsmTypeRef />
+    <DllExportTypeRefOptions>0</DllExportTypeRefOptions>
+    <DllExportRefPackages />
+    <DllExportPreProcType>0</DllExportPreProcType>
+    <DllExportPostProcType>0</DllExportPostProcType>
+    <DllExportDir>$(MSBuildProjectDirectory)\..\..\</DllExportDir>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+    <PackageReference Include="DllExport">
+      <Version>1.8.1</Version>
+      <Visible>false</Visible>
+      <Wz>1</Wz>
+    </PackageReference>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
-
   <ItemGroup>
-    <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
-
+  <ImportGroup Label=".NET DllExport">
+    <Import Project="$(DllExportDir)packages\DllExport.1.8.1\tools\net.r_eg.DllExport.targets" Condition="Exists($([MSBuild]::Escape('$(DllExportDir)packages\DllExport.1.8.1\tools\net.r_eg.DllExport.targets')))" Label="8337224c9ad9e356" />
+  </ImportGroup>
+  <Target Name="DllExportRestorePkg" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(DllExportNoRestore)'!='true' And !Exists('$(DllExportDir)DllExport.bat')" Text="DllExport.bat was not found in $(DllExportDir); https://github.com/3F/DllExport" />
+    <Exec Condition="'$(DllExportNoRestore)'!='true' And ('$(DllExportModImported)'!='true' Or !Exists('$(DllExportDir)packages\DllExport.1.8.1\tools\net.r_eg.DllExport.targets') Or !Exists('$(DllExportDir)packages\DllExport.1.8.1\gcache')) And Exists('$(DllExportDir)DllExport.bat')" Command=".\DllExport.bat  -action Restore" WorkingDirectory="$(DllExportDir)" />
+    <MSBuild Condition="'$(DllExportModImported)'!='true'" Projects="$(DllExportDir)packages\DllExport.1.8.1\tools\net.r_eg.DllExport.targets" Targets="DllExportMetaXBaseTarget" Properties="TargetFramework=$(TargetFramework)">
+      <Output TaskParameter="TargetOutputs" PropertyName="DllExportMetaXBase" />
+    </MSBuild>
+    <ItemGroup>
+      <Reference Include="DllExport, PublicKeyToken=8337224c9ad9e356">
+        <HintPath>$(DllExportDir)packages\DllExport.1.8.1\gcache\$(DllExportMetaXBase)\$(DllExportNamespace)\$(DllExportMetaLibName)</HintPath>
+        <Private>False</Private>
+        <SpecificVersion>False</SpecificVersion>
+      </Reference>
+    </ItemGroup>
+  </Target>
+  <Target Name="DllExportRPkgDynamicImport" BeforeTargets="PostBuildEvent" DependsOnTargets="GetFrameworkPaths" Condition="'$(DllExportModImported)'!='true' And '$(DllExportRPkgDyn)'!='false'">
+    <MSBuild BuildInParallel="true" UseResultsCache="true" Projects="$(MSBuildProjectFullPath)" Properties="Configuration=$(Configuration);DllExportRPkgDyn=true" Targets="Build" />
+  </Target>
 </Project>
