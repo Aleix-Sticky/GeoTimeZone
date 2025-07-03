@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Description>Provides an IANA time zone identifier from latitude and longitude coordinates.</Description>
     <Authors>Matt Johnson-Pint,Simon Bartlett</Authors>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net462;net6.0;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net462</TargetFrameworks>
     <PackageId>GeoTimeZone</PackageId>
     <PackageTags>timezone;time;zone;geolocation;geo;latitude;longitude;coordinates;iana;tzdb</PackageTags>
     <PackageProjectUrl>https://github.com/mattjohnsonpint/GeoTimeZone</PackageProjectUrl>
@@ -41,14 +41,24 @@
     <DllExportILAsmTypeRef />
     <DllExportTypeRefOptions>0</DllExportTypeRefOptions>
     <DllExportRefPackages />
-    <DllExportPreProcType>0</DllExportPreProcType>
+    <DllExportPreProcType>283</DllExportPreProcType>
+    <DllExportILMerge />
     <DllExportPostProcType>0</DllExportPostProcType>
     <DllExportDir>$(MSBuildProjectDirectory)\..\..\</DllExportDir>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Conari">
+      <Version>1.5.0</Version>
+      <PrivateAssets>all</PrivateAssets>
+      <Wz>1</Wz>
+    </PackageReference>
     <PackageReference Include="DllExport">
       <Version>1.8.1</Version>
       <Visible>false</Visible>
+      <Wz>1</Wz>
+    </PackageReference>
+    <PackageReference Include="ilmerge">
+      <Version>3.0.41</Version>
       <Wz>1</Wz>
     </PackageReference>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
@@ -56,6 +66,14 @@
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
+  <Target Name="DllExportPreProc" BeforeTargets="DllExportMod" Label="8337224c9ad9e356:PreProc">
+    <Copy SourceFiles="$(DllExportMetaLibFullPath)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" ContinueOnError="true" />
+    <Move SourceFiles="$(TargetPath)" DestinationFiles="$(TargetDir).ilm0\$(TargetName).dll" OverwriteReadOnlyFiles="true" ContinueOnError="true" />
+    <Move SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFiles="$(TargetDir).ilm0\$(TargetName).pdb" OverwriteReadOnlyFiles="true" ContinueOnError="true" />
+    <Exec Command="$(ILMergeConsolePath) .ilm0\$(TargetName).dll Conari.dll /out:$(TargetFileName) $(DllExportPreProcSysLibs)" WorkingDirectory="$(TargetDir)" ContinueOnError="true" />
+    <RemoveDir Directories="$(TargetDir).ilm0" ContinueOnError="true" />
+    <Delete Files="$(TargetDir)$(DllExportMetaLibName);$(TargetDir)Conari.dll" ContinueOnError="true" />
+  </Target>
   <ImportGroup Label=".NET DllExport">
     <Import Project="$(DllExportDir)packages\DllExport.1.8.1\tools\net.r_eg.DllExport.targets" Condition="Exists($([MSBuild]::Escape('$(DllExportDir)packages\DllExport.1.8.1\tools\net.r_eg.DllExport.targets')))" Label="8337224c9ad9e356" />
   </ImportGroup>

@@ -1,5 +1,6 @@
 using System.IO.Compression;
 using System.Runtime.InteropServices;
+using net.r_eg.Conari.Types;
 
 namespace GeoTimeZone;
 
@@ -8,13 +9,32 @@ namespace GeoTimeZone;
 /// </summary>
 public static class TimeZoneLookup
 {
+    private static NativeString<TCharPtr>? Result;
+
+    [DllExport("FreeResult", CallingConvention = CallingConvention.Cdecl)]
+    public static void FreeResult()
+    {
+        Result?.Dispose();
+    }
+
+    /// <summary>
+    /// Determines the IANA time zone for given location coordinates.
+    /// </summary>
+    /// <param name="latitude">The latitude of the location.</param>
+    /// <param name="longitude">The longitude of the location.</param>
+    /// <returns>A string, which contains the result of the operation.</returns>
+    [DllExport("GetTimeZone", CallingConvention = CallingConvention.Cdecl)]
+    public static IntPtr GetTimeZoneResult(double latitude, double longitude)
+    {
+        Result = new NativeString<TCharPtr>(GetTimeZone(latitude, longitude).Result);
+        return Result;
+    }
     /// <summary>
     /// Determines the IANA time zone for given location coordinates.
     /// </summary>
     /// <param name="latitude">The latitude of the location.</param>
     /// <param name="longitude">The longitude of the location.</param>
     /// <returns>A <see cref="TimeZoneResult"/> object, which contains the result(s) of the operation.</returns>
-    [DllExport]
     public static TimeZoneResult GetTimeZone(double latitude, double longitude)
     {
 #if NET6_0_OR_GREATER || NETSTANDARD2_1
