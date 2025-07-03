@@ -10,6 +10,7 @@ namespace GeoTimeZone;
 public static class TimeZoneLookup
 {
     private static NativeString<TCharPtr>? Result;
+    private static bool TCharPtrConfigured = false;
 
     [DllExport("FreeResult", CallingConvention = CallingConvention.Cdecl)]
     public static void FreeResult()
@@ -26,6 +27,12 @@ public static class TimeZoneLookup
     [DllExport("GetTimeZone", CallingConvention = CallingConvention.Cdecl)]
     public static IntPtr GetTimeZoneResult(double latitude, double longitude)
     {
+        Result?.Dispose();
+        if (!TCharPtrConfigured)
+        {
+            TCharPtr.Unicode = true;
+            TCharPtrConfigured = true;
+        }
         Result = new NativeString<TCharPtr>(GetTimeZone(latitude, longitude).Result);
         return Result;
     }
