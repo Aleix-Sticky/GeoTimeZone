@@ -41,7 +41,7 @@
     <DllExportILAsmTypeRef />
     <DllExportTypeRefOptions>0</DllExportTypeRefOptions>
     <DllExportRefPackages />
-    <DllExportPreProcType>283</DllExportPreProcType>
+    <DllExportPreProcType>346</DllExportPreProcType>
     <DllExportILMerge />
     <DllExportPostProcType>0</DllExportPostProcType>
     <DllExportDir>$(MSBuildProjectDirectory)\..\..\</DllExportDir>
@@ -57,8 +57,8 @@
       <Visible>false</Visible>
       <Wz>1</Wz>
     </PackageReference>
-    <PackageReference Include="ilmerge">
-      <Version>3.0.41</Version>
+    <PackageReference Include="ILRepack">
+      <Version>2.0.43</Version>
       <Wz>1</Wz>
     </PackageReference>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
@@ -70,7 +70,7 @@
     <Copy SourceFiles="$(DllExportMetaLibFullPath)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" ContinueOnError="true" />
     <Move SourceFiles="$(TargetPath)" DestinationFiles="$(TargetDir).ilm0\$(TargetName).dll" OverwriteReadOnlyFiles="true" ContinueOnError="true" />
     <Move SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFiles="$(TargetDir).ilm0\$(TargetName).pdb" OverwriteReadOnlyFiles="true" ContinueOnError="true" />
-    <Exec Command="$(ILMergeConsolePath) .ilm0\$(TargetName).dll Conari.dll /out:$(TargetFileName) $(DllExportPreProcSysLibs)" WorkingDirectory="$(TargetDir)" ContinueOnError="true" />
+    <Exec Command="$(ILRepack) .ilm0\$(TargetName).dll Conari.dll /out:$(TargetFileName) $(DllExportPreProcSysLibs)" WorkingDirectory="$(TargetDir)" ContinueOnError="true" />
     <RemoveDir Directories="$(TargetDir).ilm0" ContinueOnError="true" />
     <Delete Files="$(TargetDir)$(DllExportMetaLibName);$(TargetDir)Conari.dll" ContinueOnError="true" />
   </Target>
